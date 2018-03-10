@@ -910,6 +910,9 @@ void kill_screen(const char* lcd_msg) {
       MENU_ITEM(submenu, MSG_TUNE, lcd_tune_menu);
     }
     else {
+      MENU_ITEM(gcode, MSG_AUTO_HOME_Z, PSTR("G28 Z"));
+	  MENU_ITEM(gcode, MSG_DISABLE_STEPPERS, PSTR("M84"));
+      MENU_ITEM(function, MSG_PREHEAT_1_N MSG_H1, lcd_preheat_m1_e0);
       MENU_ITEM(submenu, MSG_PREPARE, lcd_prepare_menu);
       #if ENABLED(DELTA_CALIBRATION_MENU)
         MENU_ITEM(submenu, MSG_DELTA_CALIBRATE, lcd_delta_calibrate_menu);
