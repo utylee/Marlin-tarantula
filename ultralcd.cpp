@@ -874,6 +874,36 @@ void kill_screen(const char* lcd_msg) {
 
   #endif
 
+
+
+  constexpr int16_t heater_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP);
+
+
+  void _lcd_preheat(const int16_t endnum, const int16_t temph, const int16_t tempb, const int16_t fan) {
+    if (temph > 0) thermalManager.setTargetHotend(min(heater_maxtemp[endnum], temph), endnum);
+    #if TEMP_SENSOR_BED != 0
+      if (tempb >= 0) thermalManager.setTargetBed(tempb);
+    #else
+      UNUSED(tempb);
+    #endif
+    #if FAN_COUNT > 0
+      #if FAN_COUNT > 1
+        fanSpeeds[active_extruder < FAN_COUNT ? active_extruder : 0] = fan;
+      #else
+        fanSpeeds[0] = fan;
+      #endif
+    #else
+      UNUSED(fan);
+    #endif
+    lcd_return_to_status();
+  }
+
+	 #if TEMP_SENSOR_0 != 0
+		#if TEMP_SENSOR_BED != 0
+		  void lcd_preheat_m1_e0() { _lcd_preheat(0, lcd_preheat_hotend_temp[0], lcd_preheat_bed_temp[0], lcd_preheat_fan_speed[0]); }
+		#endif
+	#endif
+
   /**
    *
    * "Main" menu
@@ -1297,13 +1327,17 @@ void kill_screen(const char* lcd_msg) {
 
   #endif // HAS_MOTOR_CURRENT_PWM
 
+
+/*
   constexpr int16_t heater_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP);
+  */
 
   /**
    *
    * "Prepare" submenu items
    *
    */
+  /* move to earlier position 
   void _lcd_preheat(const int16_t endnum, const int16_t temph, const int16_t tempb, const int16_t fan) {
     if (temph > 0) thermalManager.setTargetHotend(min(heater_maxtemp[endnum], temph), endnum);
     #if TEMP_SENSOR_BED != 0
@@ -1322,12 +1356,15 @@ void kill_screen(const char* lcd_msg) {
     #endif
     lcd_return_to_status();
   }
+  */
 
   #if TEMP_SENSOR_0 != 0
     void lcd_preheat_m1_e0_only() { _lcd_preheat(0, lcd_preheat_hotend_temp[0], -1, lcd_preheat_fan_speed[0]); }
     void lcd_preheat_m2_e0_only() { _lcd_preheat(0, lcd_preheat_hotend_temp[1], -1, lcd_preheat_fan_speed[1]); }
     #if TEMP_SENSOR_BED != 0
+	/*
       void lcd_preheat_m1_e0() { _lcd_preheat(0, lcd_preheat_hotend_temp[0], lcd_preheat_bed_temp[0], lcd_preheat_fan_speed[0]); }
+	  */
       void lcd_preheat_m2_e0() { _lcd_preheat(0, lcd_preheat_hotend_temp[1], lcd_preheat_bed_temp[1], lcd_preheat_fan_speed[1]); }
     #endif
   #endif
